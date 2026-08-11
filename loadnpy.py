@@ -24,24 +24,15 @@ def build_index():
     )
 
     if len(npy_files) == 0:
-        raise RuntimeError(
-            f"Không tìm thấy file .npy trong {CLIP_DIR}"
-        )
+        raise RuntimeError(f"Không tìm thấy file .npy trong {CLIP_DIR}" )
     print(f"Tìm thấy {len(npy_files)} file .npy")
 
     for file_name in npy_files:
         video_id = os.path.splitext(file_name)[0]
 
-        npy_path = os.path.join(
-            CLIP_DIR,
-            file_name
-        )
+        npy_path = os.path.join(CLIP_DIR, file_name)
 
-        csv_path = os.path.join(
-            CSV_DIR,
-            video_id + ".csv"
-        )
-
+        csv_path = os.path.join(CSV_DIR, video_id + ".csv")
 
         if not os.path.exists(csv_path):
             raise FileNotFoundError(
@@ -51,13 +42,9 @@ def build_index():
 
         features = np.load(npy_path)
 
-        print(
-            f"\n{video_id}"
-        )
+        print(f"\n{video_id}")
 
-        print(
-            f"CLIP shape: {features.shape}"
-        )
+        print(f"CLIP shape: {features.shape}")
 
         # float16 -> float32
         features = features.astype(np.float32)
@@ -74,9 +61,7 @@ def build_index():
         num_features = features.shape[0]
         df = pd.read_csv(csv_path)
 
-        print(
-            f"CSV rows: {len(df)}"
-        )
+        print(f"CSV rows: {len(df)}")
         if num_features != len(df):
 
             raise ValueError(
@@ -90,9 +75,7 @@ def build_index():
 
         for i in range(num_features):
 
-            frame_idx = int(
-                df.iloc[i]["frame_idx"]
-            )
+            frame_idx = int(df.iloc[i]["frame_idx"])
 
             mapping.append({
                 "faiss_id": global_id,
@@ -102,24 +85,11 @@ def build_index():
 
             global_id += 1
 
-    all_features = np.vstack(
-        all_features
-    )
-
-    print("\n======================")
+    all_features = np.vstack(all_features)
     print("TOTAL DATA")
-    print("======================")
+    print("Total vectors:",all_features.shape[0])
 
-    print(
-        "Total vectors:",
-        all_features.shape[0]
-    )
-
-    print(
-        "Embedding dimension:",
-        all_features.shape[1]
-    )
-
+    print("Embedding dimension:",all_features.shape[1])
 
     embedding_dim = all_features.shape[1]
 
@@ -129,19 +99,8 @@ def build_index():
 
     index.add(all_features)
 
-    print(
-        "FAISS vectors:",
-        index.ntotal
-    )
-    faiss.write_index(
-        index,
-        INDEX_PATH
-    )
-
-    print(
-        f"Saved index: {INDEX_PATH}"
-    )
-
+    print("FAISS vectors:", index.ntotal)
+    faiss.write_index(index, INDEX_PATH)
     with open(
         MAPPING_PATH,
         "w",
@@ -154,8 +113,4 @@ def build_index():
             ensure_ascii=False,
             indent=2
         )
-
-    print(
-        f"Saved mapping: {MAPPING_PATH}"
-    )
     print("\nBUILD SUCCESS!")
