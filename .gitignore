@@ -1,0 +1,24 @@
+# Python / Conda
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+env/
+venv/
+
+# Jupyter Notebook cache
+.ipynb_checkpoints
+
+# DATASET & WEIGHTS (Không push các file nặng lên Git)
+data/
+*.mp4
+*.avi
+*.h5
+*.mat
+*.pth
+*.pt
+*.onnx
+
+# IDE
+.vscode/
+.idea/
