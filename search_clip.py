@@ -1,65 +1,45 @@
-import json
 import numpy as np
-import faiss
+from pymilvus import MilvusClient
 
 
-INDEX_PATH = "index/clip.index"
-MAPPING_PATH = "index/mapping.json"
+MILVUS_URI = "http://localhost:19530"
+COLLECTION_NAME = "clip_keyframes"
+EMBEDDING_DIM = 512
 
 
 class ClipRetriever:
     def __init__(self):
-        self.index = faiss.read_index(INDEX_PATH)
-
-        # Load mapping
-        with open(
-            MAPPING_PATH,
-            "r",
-            encoding="utf-8"
-        ) as f:
-            self.mapping = json.load(f)
-
-        print(
-            f"Loaded {self.index.ntotal} vectors"
-        )
-
+        self.client = MilvusClient(uri=MILVUS_URI)
+        self.collection_name = COLLECTION_NAME
+        print(f"Connected to Milvus: {COLLECTION_NAME}")
 
     def search(self, query_vector, top_k=10):
-        query_vector = np.asarray(
-            query_vector,
-            dtype=np.float32
-        )
-        #Check dimension
+        query_vector = np.asarray(query_vector, dtype=np.float32)
+
         if query_vector.ndim == 1:
             query_vector = query_vector.reshape(1, -1)
 
-        if query_vector.shape[1] != self.index.d:
+        if query_vector.shape[1] != EMBEDDING_DIM:
+            raise ValueError(f"Query vector có {query_vector.shape[1]} chiều, cần {EMBEDDING_DIM} chiều.")
 
-            raise ValueError(
-                f"Query vector có {query_vector.shape[1]} chiều, "
-                f"nhưng FAISS cần {self.index.d} chiều."
-            )
-        faiss.normalize_L2(query_vector)
+        norms = np.linalg.norm(query_vector, axis=1, keepdims=True)
+        norms[norms == 0] = 1e-12
+        query_vector = query_vector / norms
 
-        scores, ids = self.index.search(
-            query_vector,
-            top_k
+        results = self.client.search(
+            collection_name=self.collection_name,
+            data=query_vector.tolist(),
+            anns_field="embedding",
+            search_params={"metric_type": "IP", "params": {"nprobe": 10}},
+            limit=top_k,
+            output_fields=["video_id", "frame_id"]
         )
 
-        results = []
-
-        for score, faiss_id in zip(
-            scores[0],
-            ids[0]
-        ):
-            if faiss_id == -1:
-                continue
-
-            info = self.mapping[faiss_id]
-
-            results.append({
-                "video_id": info["video_id"],
-                "frame_id": info["frame_id"],
-                "score": float(score)
-            })
-        return results
+        return [
+            {
+                "video_id": result["entity"]["video_id"],
+                "frame_id": result["entity"]["frame_id"],
+                "score": float(result["distance"])
+            }
+            for result in results[0]
+        ]
