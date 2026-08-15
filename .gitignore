@@ -5,6 +5,12 @@ __pycache__/
 .venv/
 env/
 venv/
+.env
+.venv/
+.pytest_cache/
+.ruff_cache/
+.codex_tmp/
+.pytest_tmp/
 
 # Jupyter Notebook cache
 .ipynb_checkpoints

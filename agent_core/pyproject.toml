@@ -1,0 +1,32 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aic-agent-core"
+version = "0.1.0"
+description = "Gemini-powered query understanding and routing for AIC 2026"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+  "google-genai>=1.30.0,<2",
+  "pydantic>=2.8,<3",
+  "pydantic-settings>=2.4,<3",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.2,<9",
+  "pytest-asyncio>=0.24,<1",
+]
+
+[project.scripts]
+aic-route = "aic_agent_core.__main__:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aic_agent_core"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
