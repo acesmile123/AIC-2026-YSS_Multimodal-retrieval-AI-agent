@@ -1,0 +1,30 @@
+
+{
+  "query_id": "q_001",
+  "raw_query": "một người đàn ông mặc áo màu xanh lá cây ngồi viết trên bàn",
+  "query_variants": [
+    "a man wearing a green shirt sitting and writing at a table",
+    "a man in a green shirt sitting at a table writing"
+  ],
+  "visual_description": "a man wearing a green shirt sitting and writing at a table",
+  "entities": [
+    {
+      "type": "object",
+      "value": "man",
+      "attributes": {
+        "clothing_color": "green"
+      }
+    }
+  ],
+  "needs_ocr": false,
+  "needs_asr": false,
+  "question": null,
+  "events": [
+    {
+      "action": "sitting and writing"
+    }
+  ],
+  "temporal_constraints": []
+}
+
+
