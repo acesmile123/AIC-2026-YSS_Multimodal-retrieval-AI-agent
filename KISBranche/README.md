@@ -1,15 +1,14 @@
 ## AIC 2026 KIS Branch 
 # Setup
 Data:
+   
     - List of keyframes from video
-    
     - Object detection score
-   
     - Mapping between keyframes and frame_index
-   
     - Clip-features
     All of those data are provided by AIC
 Operation:
+    
     - Setup a docker storage suitable with build_mivus.py 
     - Generate caption for each keyframe by caption_generator.py
     - Generate caption index and mapping by build_caption_index.py
