@@ -2,8 +2,11 @@
 # Setup
 Data:
     - List of keyframes from video
+    
     - Object detection score
+   
     - Mapping between keyframes and frame_index
+   
     - Clip-features
     All of those data are provided by AIC
 Operation:
