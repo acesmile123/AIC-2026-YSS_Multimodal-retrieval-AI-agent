@@ -1,0 +1,10 @@
+torch
+transformers
+accelerate
+qwen-vl-utils
+Pillow
+pytesseract>=0.3.13
+safetensors
+# QA vector metadata enrichment / lookup
+pymilvus>=2.5
+pandas>=2.0
